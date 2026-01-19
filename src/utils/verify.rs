@@ -1,4 +1,4 @@
-use std::path::Path;
+use std::{path::Path, process::Stdio};
 
 use tokio::process::Command;
 
@@ -11,13 +11,16 @@ pub async fn verify_minisign_signature<P: AsRef<Path>>(
     let mut cmd = Command::new("minisign");
 
     for key in public_keys {
-        cmd.arg("-P").arg(key.as_ref());
+        cmd.arg("-p").arg(key.as_ref());
     }
 
     cmd.arg("-Vm")
         .arg(target_file.as_ref())
         .arg("-x")
         .arg(signature_file.as_ref());
+
+    cmd.stdout(Stdio::null());
+    cmd.stdin(Stdio::null());
 
     let status = cmd.status().await?;
 
