@@ -7,7 +7,19 @@ pub const CONFIG_DIR: &str = "/etc/ampkg";
 pub const CACHE_DIR: &str = "/var/cache/ampkg";
 pub const LOG_DIR: &str = "/var/log/ampkg";
 pub const PUBLIC_KEYS_DIR: &str = "/usr/share/ampkg/keys";
+pub const PKGINSTALL_DIR: &str = "/tmp/ampkg/pkginstall";
 
+
+pub fn get_pkginstall_dir() -> PathBuf {
+    let dir = Path::new(PKGINSTALL_DIR);
+
+    fs::create_dir_all(dir).unwrap_or_else(|e| {
+        err!("Failed to create pkginstall directory {}: {}", dir.display(), e);
+        std::process::exit(1);
+    });
+
+    dir.to_path_buf()
+}
 
 pub fn get_public_keys() -> Vec<PathBuf> {
     let mut keys = Vec::new();
